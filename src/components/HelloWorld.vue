@@ -4,20 +4,40 @@
       <textarea id="md-editor" v-model="text"></textarea>
     </div>
     <div id="preview-field">
-      <article class="markdown-body">
-        {{ text }}
+      <article class="markdown-body" v-html="$options.filters.convertMdToHtml(text)">
+        {{ text | convertMdToHtml }}
       </article>
     </div>
   </div>
 </template>
 
 <script>
+import marked from 'marked'
+import('github-markdown-css/github-markdown.css')
+
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: false,
+  xhtml: false
+})
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
       text: ''
+    }
+  },
+  filters: {
+    convertMdToHtml: function (text) {
+      return text ? marked(text) : ''
     }
   }
 }
@@ -41,7 +61,6 @@ a {
 }
 
 #md-editor {
-  background-color: #00FF00;
   display: flex;
   flex: auto;
   justify-content: center;/* 3 */
@@ -54,7 +73,6 @@ a {
 }
 
 #preview-field {
-  background-color: #FF0000;
   margin: 0 10px;
 }
 
